@@ -1,53 +1,39 @@
 package com.example.exam;
 
-import android.annotation.SuppressLint;
-import android.database.Cursor;
 import android.os.Bundle;
 import android.widget.Toast;
-
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-
 import java.util.ArrayList;
-import java.util.List;
 
 public class HistoryActivity extends AppCompatActivity {
 
     private RecyclerView historyRecyclerView;
     private TaskAdapter historyAdapter;
-    private TaskDatabaseHelper taskDatabaseHelper;
-    private List<Task> completedTaskList = new ArrayList<>();
+    private ArrayList<Task> completedTaskList;
+    private TaskDatabaseHelper databaseHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_history);
+        setContentView(R.layout.activity_history);  // Make sure your layout file is named correctly
 
-        taskDatabaseHelper = new TaskDatabaseHelper(this);
+        // Initialize the RecyclerView and TaskAdapter
         historyRecyclerView = findViewById(R.id.historyRecyclerView);
-
-        loadCompletedTasks();
-
-        historyAdapter = new TaskAdapter(completedTaskList);
         historyRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        historyRecyclerView.setAdapter(historyAdapter);
-    }
 
-    private void loadCompletedTasks() {
-        Cursor cursor = taskDatabaseHelper.getCompletedTasks();
+        // Initialize the database helper
+        databaseHelper = new TaskDatabaseHelper(this);
 
-        if (cursor != null && cursor.moveToFirst()) {
-            do {
-                @SuppressLint("Range") int id = cursor.getInt(cursor.getColumnIndex("id"));
-                @SuppressLint("Range") String taskName = cursor.getString(cursor.getColumnIndex("task_name"));
-                @SuppressLint("Range") String description = cursor.getString(cursor.getColumnIndex("description"));
-                @SuppressLint("Range") String deadline = cursor.getString(cursor.getColumnIndex("deadline"));
-                Task task = new Task(id, taskName, description, deadline, true);
-                completedTaskList.add(task);
-            } while (cursor.moveToNext());
-            cursor.close();
+        // Fetch completed tasks from the database
+        completedTaskList = databaseHelper.getCompletedTasks();
+
+        if (completedTaskList != null && !completedTaskList.isEmpty()) {
+            // Set up the adapter with the completed tasks
+            historyAdapter = new TaskAdapter(completedTaskList, this);
+            historyRecyclerView.setAdapter(historyAdapter);
         } else {
             Toast.makeText(this, "No completed tasks", Toast.LENGTH_SHORT).show();
         }

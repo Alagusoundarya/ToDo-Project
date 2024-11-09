@@ -6,13 +6,12 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
-
 import androidx.appcompat.app.AppCompatActivity;
 
 public class HomeActivity extends AppCompatActivity {
 
-    private EditText taskNameEditText, descriptionEditText, deadlineEditText;
-    private Button submitButton;
+    private EditText taskNameEditText, taskDescEditText, taskDeadlineEditText;
+    private Button addTaskButton;
     private TaskDatabaseHelper taskDatabaseHelper;
 
     @Override
@@ -20,26 +19,33 @@ public class HomeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
+        // Initialize views
+        taskNameEditText = findViewById(R.id.taskNameEditText);
+        taskDescEditText = findViewById(R.id.taskDescEditText);
+        taskDeadlineEditText = findViewById(R.id.taskDeadlineEditText);
+        addTaskButton = findViewById(R.id.addTaskButton);
+
+        // Initialize Database Helper
         taskDatabaseHelper = new TaskDatabaseHelper(this);
 
-        taskNameEditText = findViewById(R.id.taskNameEditText);
-        descriptionEditText = findViewById(R.id.descriptionEditText);
-        deadlineEditText = findViewById(R.id.deadlineEditText);
-        submitButton = findViewById(R.id.submitButton);
-
-        submitButton.setOnClickListener(v -> {
+        // Button click listener to add task
+        addTaskButton.setOnClickListener(v -> {
             String taskName = taskNameEditText.getText().toString();
-            String description = descriptionEditText.getText().toString();
-            String deadline = deadlineEditText.getText().toString();
+            String taskDesc = taskDescEditText.getText().toString();
+            String taskDeadline = taskDeadlineEditText.getText().toString();
 
-            if (!taskName.isEmpty() && !deadline.isEmpty()) {
-                taskDatabaseHelper.addTask(taskName, description, deadline);
-                Toast.makeText(HomeActivity.this, "Task Added", Toast.LENGTH_SHORT).show();
+            if (!taskName.isEmpty() && !taskDesc.isEmpty() && !taskDeadline.isEmpty()) {
+                taskDatabaseHelper.addTask(taskName, taskDesc, taskDeadline);
+                Toast.makeText(this, "Task Added!", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(this, "Please fill in all fields", Toast.LENGTH_SHORT).show();
             }
         });
-    }
 
-    public void navigateToHistory(View view) {
-        startActivity(new Intent(this, HistoryTaskActivity.class));
+        // Go to History Activity to see completed tasks
+        findViewById(R.id.historyButton).setOnClickListener(v -> {
+            Intent intent = new Intent(HomeActivity.this, HistoryActivity.class);
+            startActivity(intent);
+        });
     }
 }

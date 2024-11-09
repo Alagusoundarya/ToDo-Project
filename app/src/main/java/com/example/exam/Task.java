@@ -3,15 +3,15 @@ package com.example.exam;
 public class Task {
     private int id;
     private String taskName;
-    private String description;
-    private String deadline;
+    private String taskDescription;
+    private String taskDeadline;
     private boolean isCompleted;
 
-    public Task(int id, String taskName, String description, String deadline, boolean isCompleted) {
+    public Task(int id, String taskName, String taskDescription, String taskDeadline, boolean isCompleted) {
         this.id = id;
         this.taskName = taskName;
-        this.description = description;
-        this.deadline = deadline;
+        this.taskDescription = taskDescription;
+        this.taskDeadline = taskDeadline;
         this.isCompleted = isCompleted;
     }
 
@@ -23,15 +23,31 @@ public class Task {
         return taskName;
     }
 
-    public String getDescription() {
-        return description;
+    public String getTaskDescription() {
+        return taskDescription;
     }
 
-    public String getDeadline() {
-        return deadline;
+    public String getTaskDeadline() {
+        return taskDeadline;
     }
 
     public boolean isCompleted() {
         return isCompleted;
+    }
+
+    public void setTaskName(String taskName) {
+        this.taskName = taskName;
+    }
+
+    public void setTaskDescription(String taskDescription) {
+        this.taskDescription = taskDescription;
+    }
+
+    public void setTaskDeadline(String taskDeadline) {
+        this.taskDeadline = taskDeadline;
+    }
+
+    public void setCompleted(boolean completed) {
+        isCompleted = completed;
     }
 }

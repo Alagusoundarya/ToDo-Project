@@ -1,61 +1,90 @@
 package com.example.exam;
 
+import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import java.util.ArrayList;
+
 public class TaskDatabaseHelper extends SQLiteOpenHelper {
 
-    private static final String DATABASE_NAME = "tasks.db";
-    private static final int DATABASE_VERSION = 1;
+    // Define table and columns
+    private static final String TABLE_TASKS = "tasks";
+    private static final String COLUMN_ID = "id";
+    private static final String COLUMN_NAME = "name";
+    private static final String COLUMN_DESCRIPTION = "description";
+    private static final String COLUMN_DEADLINE = "deadline";
+    private static final String COLUMN_IS_COMPLETED = "is_completed";
 
+    // Constructor
     public TaskDatabaseHelper(Context context) {
-        super(context, DATABASE_NAME, null, DATABASE_VERSION);
+        super(context, "tasks.db", null, 1); // Database name and version
     }
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        String CREATE_TABLE = "CREATE TABLE tasks ("
-                + "id INTEGER PRIMARY KEY AUTOINCREMENT, "
-                + "task_name TEXT NOT NULL, "
-                + "description TEXT, "
-                + "deadline TEXT NOT NULL, "
-                + "is_completed INTEGER NOT NULL DEFAULT 0)";
-        db.execSQL(CREATE_TABLE);
+        // SQL to create the tasks table
+        String createTableQuery = "CREATE TABLE " + TABLE_TASKS + " ("
+                + COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+                + COLUMN_NAME + " TEXT, "
+                + COLUMN_DESCRIPTION + " TEXT, "
+                + COLUMN_DEADLINE + " TEXT, "
+                + COLUMN_IS_COMPLETED + " INTEGER)";
+        db.execSQL(createTableQuery);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        db.execSQL("DROP TABLE IF EXISTS tasks");
+        // Upgrade database if necessary
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_TASKS);
         onCreate(db);
     }
 
-    public void addTask(String taskName, String description, String deadline) {
+    // Add a new task
+    public void addTask(Task task) {
         SQLiteDatabase db = this.getWritableDatabase();
+
         ContentValues values = new ContentValues();
-        values.put("task_name", taskName);
-        values.put("description", description);
-        values.put("deadline", deadline);
-        values.put("is_completed", 0);  // Set as not completed initially
-        db.insert("tasks", null, values);
+        values.put(COLUMN_NAME, task.getName());
+        values.put(COLUMN_DESCRIPTION, task.getDescription());
+        values.put(COLUMN_DEADLINE, task.getDeadline());
+        values.put(COLUMN_IS_COMPLETED, task.isCompleted() ? 1 : 0);
+
+        db.insert(TABLE_TASKS, null, values);
+        db.close();
     }
 
-    public Cursor getAllTasks() {
+    // Get all completed tasks
+    public ArrayList<Task> getCompletedTasks() {
         SQLiteDatabase db = this.getReadableDatabase();
-        return db.rawQuery("SELECT * FROM tasks", null);
+        ArrayList<Task> completedTasks = new ArrayList<>();
+
+        // Query to get tasks that are marked as completed
+        String query = "SELECT * FROM " + TABLE_TASKS + " WHERE " + COLUMN_IS_COMPLETED + " = 1";
+        Cursor cursor = db.rawQuery(query, null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                // Get task details
+                @SuppressLint("Range") int id = cursor.getInt(cursor.getColumnIndex(COLUMN_ID));
+                @SuppressLint("Range") String name = cursor.getString(cursor.getColumnIndex(COLUMN_NAME));
+                @SuppressLint("Range") String description = cursor.getString(cursor.getColumnIndex(COLUMN_DESCRIPTION));
+                @SuppressLint("Range") String deadline = cursor.getString(cursor.getColumnIndex(COLUMN_DEADLINE));
+                @SuppressLint("Range") boolean isCompleted = cursor.getInt(cursor.getColumnIndex(COLUMN_IS_COMPLETED)) == 1;
+
+                // Create task object and add to list
+                Task task = new Task(id, name, description, deadline, isCompleted);
+                completedTasks.add(task);
+            } while (cursor.moveToNext());
+        }
+
+        cursor.close();
+        db.close();
+        return completedTasks;
     }
 
-    public Cursor getCompletedTasks() {
-        SQLiteDatabase db = this.getReadableDatabase();
-        return db.rawQuery("SELECT * FROM tasks WHERE is_completed = 1", null);
-    }
-
-    public void markTaskCompleted(int taskId) {
-        SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues values = new ContentValues();
-        values.put("is_completed", 1);
-        db.update("tasks", values, "id = ?", new String[]{String.valueOf(taskId)});
-    }
+    // Other methods like getTaskById(), updateTask(), etc. can go here
 }
