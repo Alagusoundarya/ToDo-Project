@@ -1,38 +1,30 @@
-<?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="16dp"
-    android:background="#ADD8E6">
+    android:orientation="vertical"
+    android:padding="16dp">
 
     <EditText
-        android:id="@+id/taskName"
+        android:id="@+id/taskNameEditText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Task Name (required)"
-        android:inputType="text" />
+        android:hint="Task Name" />
 
     <EditText
-        android:id="@+id/description"
+        android:id="@+id/taskDescriptionEditText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Description (optional)"
-        android:inputType="textMultiLine"
-        android:layout_marginTop="8dp" />
+        android:hint="Task Description (Optional)" />
+
+    <EditText
+        android:id="@+id/taskDeadlineEditText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Deadline (e.g., 2024-11-09 18:00)" />
 
     <Button
-        android:id="@+id/deadlineButton"
+        android:id="@+id/submitTaskButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Set Deadline"
-        android:layout_marginTop="8dp" />
-
-    <Button
-        android:id="@+id/submitButton"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Submit Task"
-        android:layout_marginTop="16dp" />
-
+        android:text="Submit" />
 </LinearLayout>

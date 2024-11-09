@@ -1,51 +1,38 @@
 package com.example.exam;
 
-import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import java.util.ArrayList;
 
 public class HomeActivity extends AppCompatActivity {
-    private RecyclerView recyclerView;
-    private TaskAdapter adapter;
-    private TaskDatabaseHelper dbHelper;
-    private ArrayList<Task> tasks;
+
+    private RecyclerView taskRecyclerView;
+    private TaskAdapter taskAdapter;
+    private TaskDatabaseHelper taskDatabaseHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
-        dbHelper = new TaskDatabaseHelper(this);
-        tasks = dbHelper.getPendingTasks();
+        taskRecyclerView = findViewById(R.id.taskRecyclerView);
+        taskDatabaseHelper = new TaskDatabaseHelper(this);
 
-        recyclerView = findViewById(R.id.recyclerView);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        adapter = new TaskAdapter(tasks, dbHelper);
-        recyclerView.setAdapter(adapter);
+        // Fetch pending tasks from the database
+        ArrayList<Task> tasks = taskDatabaseHelper.getPendingTasks();
 
-        FloatingActionButton addTaskButton = findViewById(R.id.addTaskButton);
-        addTaskButton.setOnClickListener(view -> {
-            Intent intent = new Intent(HomeActivity.this, AddTaskActivity.class);
-            startActivity(intent);
+        // Set up RecyclerView with TaskAdapter
+        taskAdapter = new TaskAdapter(tasks); // Pass the task list to the adapter
+        taskRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        taskRecyclerView.setAdapter(taskAdapter);
+
+        // Add task button (floating action button)
+        findViewById(R.id.addTaskButton).setOnClickListener(view -> {
+            // Handle adding a new task (navigate to Add Task screen)
+            Toast.makeText(HomeActivity.this, "Add Task clicked", Toast.LENGTH_SHORT).show();
         });
-
-        findViewById(R.id.historyButton).setOnClickListener(view -> {
-            Intent intent = new Intent(HomeActivity.this, HistoryActivity.class);
-            startActivity(intent);
-        });
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        tasks.clear();
-        tasks.addAll(dbHelper.getPendingTasks());
-        adapter.notifyDataSetChanged();
     }
 }

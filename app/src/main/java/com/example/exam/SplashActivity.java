@@ -1,3 +1,4 @@
+// SplashActivity.java
 package com.example.exam;
 
 import android.content.Intent;
@@ -15,6 +16,6 @@ public class SplashActivity extends AppCompatActivity {
             Intent intent = new Intent(SplashActivity.this, HomeActivity.class);
             startActivity(intent);
             finish();
-        }, 2000); // 2 seconds delay
+        }, 2000);
     }
 }

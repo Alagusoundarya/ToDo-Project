@@ -18,7 +18,7 @@ public class TaskDatabaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL("CREATE TABLE tasks (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, description TEXT, deadline INTEGER, completed INTEGER)");
+        db.execSQL("CREATE TABLE tasks (id INTEGER PRIMARY KEY, name TEXT, description TEXT, deadline INTEGER, completed INTEGER)");
     }
 
     @Override
@@ -27,13 +27,8 @@ public class TaskDatabaseHelper extends SQLiteOpenHelper {
         onCreate(db);
     }
 
-    public ArrayList<Task> getPendingTasks() {
-        return getTasks(0);
-    }
-
-    public ArrayList<Task> getCompletedTasks() {
-        return getTasks(1);
-    }
+    public ArrayList<Task> getPendingTasks() { return getTasks(0); }
+    public ArrayList<Task> getCompletedTasks() { return getTasks(1); }
 
     private ArrayList<Task> getTasks(int completedStatus) {
         ArrayList<Task> tasks = new ArrayList<>();
@@ -56,24 +51,15 @@ public class TaskDatabaseHelper extends SQLiteOpenHelper {
         db.insert("tasks", null, values);
     }
 
-    public void updateTask(int id, String name, String description, long deadline) {
+    public void updateTaskStatus(int taskId, boolean completed) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
-        values.put("name", name);
-        values.put("description", description);
-        values.put("deadline", deadline);
-        db.update("tasks", values, "id=?", new String[]{String.valueOf(id)});
+        values.put("completed", completed ? 1 : 0);
+        db.update("tasks", values, "id=?", new String[]{String.valueOf(taskId)});
     }
 
-    public void markTaskAsCompleted(int id) {
+    public void deleteTask(int taskId) {
         SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues values = new ContentValues();
-        values.put("completed", 1);
-        db.update("tasks", values, "id=?", new String[]{String.valueOf(id)});
-    }
-
-    public void deleteTask(int id) {
-        SQLiteDatabase db = this.getWritableDatabase();
-        db.delete("tasks", "id=?", new String[]{String.valueOf(id)});
+        db.delete("tasks", "id=?", new String[]{String.valueOf(taskId)});
     }
 }
