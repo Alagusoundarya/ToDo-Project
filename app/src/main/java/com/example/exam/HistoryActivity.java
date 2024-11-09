@@ -1,32 +1,27 @@
+// HistoryTaskActivity.java
 package com.example.exam;
 
 import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import java.util.ArrayList;
+import java.util.List;
 
-public class HistoryActivity extends AppCompatActivity {
-    private RecyclerView historyRecyclerView;
-    private TaskAdapter taskAdapter;
-    private TaskDatabaseHelper taskDatabaseHelper;
-    private ArrayList<Task> completedTasks;
+public class HistoryTaskActivity extends AppCompatActivity {
+
+    private TaskDatabaseHelper databaseHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_history);
+        setContentView(R.layout.activity_history_task);
 
-        // Initialize the RecyclerView and TaskDatabaseHelper
-        historyRecyclerView = findViewById(R.id.historyRecyclerView);
+        databaseHelper = new TaskDatabaseHelper(this);
+        RecyclerView historyRecyclerView = findViewById(R.id.historyRecyclerView);
         historyRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        taskDatabaseHelper = new TaskDatabaseHelper(this);
 
-        // Fetch completed tasks from the database
-        completedTasks = taskDatabaseHelper.getCompletedTasks();
-
-        // Set up the adapter with the completed tasks
-        taskAdapter = new TaskAdapter(completedTasks);
-        historyRecyclerView.setAdapter(taskAdapter);
+        List<Task> completedTasks = databaseHelper.getTasks(true); // Get completed tasks
+        TaskAdapter adapter = new TaskAdapter(completedTasks, null); // No mark as completed needed
+        historyRecyclerView.setAdapter(adapter);
     }
 }

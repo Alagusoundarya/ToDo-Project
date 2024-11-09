@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -5,26 +6,50 @@
     android:padding="16dp">
 
     <EditText
-        android:id="@+id/taskNameEditText"
+        android:id="@+id/taskName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Task Name" />
+        android:hint="Task Name"
+        android:inputType="text"
+        android:required="true"
+        android:layout_marginBottom="10dp"/>
 
     <EditText
-        android:id="@+id/taskDescriptionEditText"
+        android:id="@+id/taskDescription"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Task Description (Optional)" />
+        android:hint="Task Description (Optional)"
+        android:inputType="text"
+        android:layout_marginBottom="10dp"/>
 
-    <EditText
-        android:id="@+id/taskDeadlineEditText"
-        android:layout_width="match_parent"
+    <TextView
+        android:id="@+id/deadlineText"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:hint="Deadline (e.g., 2024-11-09 18:00)" />
+        android:text="Deadline"
+        android:textSize="18sp"
+        android:layout_marginBottom="10dp"/>
+
+    <TextView
+        android:id="@+id/deadlineDate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Date and Time"
+        android:textSize="16sp"
+        android:layout_marginBottom="10dp"/>
 
     <Button
-        android:id="@+id/submitTaskButton"
-        android:layout_width="match_parent"
+        android:id="@+id/selectDateButton"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Submit" />
+        android:text="Select Date and Time"
+        android:layout_marginBottom="20dp"/>
+
+    <Button
+        android:id="@+id/submitButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Submit"
+        android:layout_gravity="center"/>
+
 </LinearLayout>
