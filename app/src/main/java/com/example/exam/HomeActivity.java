@@ -1,46 +1,45 @@
-// HomeActivity.java
 package com.example.exam;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.ImageButton;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Toast;
+
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import java.util.List;
 
 public class HomeActivity extends AppCompatActivity {
 
-    private RecyclerView taskRecyclerView;
-    private TaskAdapter adapter;
-    private TaskDatabaseHelper databaseHelper;
+    private EditText taskNameEditText, descriptionEditText, deadlineEditText;
+    private Button submitButton;
+    private TaskDatabaseHelper taskDatabaseHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
-        databaseHelper = new TaskDatabaseHelper(this);
-        taskRecyclerView = findViewById(R.id.taskRecyclerView);
-        taskRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        taskDatabaseHelper = new TaskDatabaseHelper(this);
 
-        ImageButton addTaskButton = findViewById(R.id.addTaskButton);
-        addTaskButton.setOnClickListener(view -> startActivity(new Intent(HomeActivity.this, AddTaskActivity.class)));
+        taskNameEditText = findViewById(R.id.taskNameEditText);
+        descriptionEditText = findViewById(R.id.descriptionEditText);
+        deadlineEditText = findViewById(R.id.deadlineEditText);
+        submitButton = findViewById(R.id.submitButton);
 
-        ImageButton historyButton = findViewById(R.id.historyButton);
-        historyButton.setOnClickListener(view -> startActivity(new Intent(HomeActivity.this, HistoryTaskActivity.class)));
+        submitButton.setOnClickListener(v -> {
+            String taskName = taskNameEditText.getText().toString();
+            String description = descriptionEditText.getText().toString();
+            String deadline = deadlineEditText.getText().toString();
 
-        loadTasks();
+            if (!taskName.isEmpty() && !deadline.isEmpty()) {
+                taskDatabaseHelper.addTask(taskName, description, deadline);
+                Toast.makeText(HomeActivity.this, "Task Added", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
-    private void loadTasks() {
-        List<Task> tasks = databaseHelper.getTasks(false); // Get incomplete tasks
-        adapter = new TaskAdapter(tasks, task -> {
-            task.setCompleted(true);
-            databaseHelper.updateTask(task);
-            loadTasks();
-        });
-        taskRecyclerView.setAdapter(adapter);
+    public void navigateToHistory(View view) {
+        startActivity(new Intent(this, HistoryTaskActivity.class));
     }
 }

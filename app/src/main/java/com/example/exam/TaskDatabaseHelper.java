@@ -1,33 +1,15 @@
-// TaskDatabaseHelper.java
 package com.example.exam;
 
+import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.content.ContentValues;
 
 public class TaskDatabaseHelper extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "tasks.db";
     private static final int DATABASE_VERSION = 1;
-
-    // Table name and columns
-    public static final String TABLE_TASKS = "tasks";
-    public static final String COLUMN_ID = "id";
-    public static final String COLUMN_NAME = "name";
-    public static final String COLUMN_DESCRIPTION = "description";
-    public static final String COLUMN_DEADLINE = "deadline";
-    public static final String COLUMN_COMPLETED = "completed";
-
-    // SQL for creating the tasks table
-    private static final String CREATE_TABLE =
-            "CREATE TABLE " + TABLE_TASKS + " (" +
-                    COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                    COLUMN_NAME + " TEXT NOT NULL, " +
-                    COLUMN_DESCRIPTION + " TEXT, " +
-                    COLUMN_DEADLINE + " TEXT NOT NULL, " +
-                    COLUMN_COMPLETED + " INTEGER DEFAULT 0" +
-                    ")";
 
     public TaskDatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -35,34 +17,45 @@ public class TaskDatabaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
+        String CREATE_TABLE = "CREATE TABLE tasks ("
+                + "id INTEGER PRIMARY KEY AUTOINCREMENT, "
+                + "task_name TEXT NOT NULL, "
+                + "description TEXT, "
+                + "deadline TEXT NOT NULL, "
+                + "is_completed INTEGER NOT NULL DEFAULT 0)";
         db.execSQL(CREATE_TABLE);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_TASKS);
+        db.execSQL("DROP TABLE IF EXISTS tasks");
         onCreate(db);
     }
 
-    // Add task method to insert data into the database
-    public long addTask(Task task) {
+    public void addTask(String taskName, String description, String deadline) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
-        values.put(COLUMN_NAME, task.getName());
-        values.put(COLUMN_DESCRIPTION, task.getDescription());
-        values.put(COLUMN_DEADLINE, task.getDeadline());
-        values.put(COLUMN_COMPLETED, task.isCompleted() ? 1 : 0);
-
-        return db.insert(TABLE_TASKS, null, values);
+        values.put("task_name", taskName);
+        values.put("description", description);
+        values.put("deadline", deadline);
+        values.put("is_completed", 0);  // Set as not completed initially
+        db.insert("tasks", null, values);
     }
 
-    // Get writable database instance
-    public SQLiteDatabase getWritableDatabase() {
-        return super.getWritableDatabase();
+    public Cursor getAllTasks() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        return db.rawQuery("SELECT * FROM tasks", null);
     }
 
-    // Get readable database instance
-    public SQLiteDatabase getReadableDatabase() {
-        return super.getReadableDatabase();
+    public Cursor getCompletedTasks() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        return db.rawQuery("SELECT * FROM tasks WHERE is_completed = 1", null);
+    }
+
+    public void markTaskCompleted(int taskId) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put("is_completed", 1);
+        db.update("tasks", values, "id = ?", new String[]{String.valueOf(taskId)});
     }
 }

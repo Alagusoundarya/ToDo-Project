@@ -1,47 +1,34 @@
-// TaskAdapter.java
 package com.example.exam;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.TextView;
-import androidx.annotation.NonNull;
+
 import androidx.recyclerview.widget.RecyclerView;
+
 import java.util.List;
 
 public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder> {
 
-    private final List<Task> taskList;
-    private final OnTaskCompletedListener listener;
+    private List<Task> taskList;
 
-    public interface OnTaskCompletedListener {
-        void onTaskCompleted(Task task);
-    }
-
-    public TaskAdapter(List<Task> taskList, OnTaskCompletedListener listener) {
+    public TaskAdapter(List<Task> taskList) {
         this.taskList = taskList;
-        this.listener = listener;
     }
 
-    @NonNull
     @Override
-    public TaskViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public TaskViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_task, parent, false);
         return new TaskViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull TaskViewHolder holder, int position) {
+    public void onBindViewHolder(TaskViewHolder holder, int position) {
         Task task = taskList.get(position);
-        holder.taskName.setText(task.getName());
-
-        if (listener != null) { // For tasks on the Home screen
-            holder.completeButton.setVisibility(View.VISIBLE);
-            holder.completeButton.setOnClickListener(v -> listener.onTaskCompleted(task));
-        } else { // For tasks on the History screen
-            holder.completeButton.setVisibility(View.GONE);
-        }
+        holder.taskNameTextView.setText(task.getTaskName());
+        holder.descriptionTextView.setText(task.getDescription());
+        holder.deadlineTextView.setText(task.getDeadline());
     }
 
     @Override
@@ -49,14 +36,17 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
         return taskList.size();
     }
 
-    static class TaskViewHolder extends RecyclerView.ViewHolder {
-        TextView taskName;
-        Button completeButton;
+    public static class TaskViewHolder extends RecyclerView.ViewHolder {
 
-        TaskViewHolder(@NonNull View itemView) {
+        TextView taskNameTextView;
+        TextView descriptionTextView;
+        TextView deadlineTextView;
+
+        public TaskViewHolder(View itemView) {
             super(itemView);
-            taskName = itemView.findViewById(R.id.taskName);
-            completeButton = itemView.findViewById(R.id.completeButton);
+            taskNameTextView = itemView.findViewById(R.id.taskNameTextView);
+            descriptionTextView = itemView.findViewById(R.id.descriptionTextView);
+            deadlineTextView = itemView.findViewById(R.id.deadlineTextView);
         }
     }
 }
