@@ -15,7 +15,7 @@
         android:id="@+id/addTaskButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/ic_add"
+        android:src="@drawable/add"
         android:contentDescription="Add Task"
         android:tint="@android:color/white"
         android:layout_alignParentBottom="true"

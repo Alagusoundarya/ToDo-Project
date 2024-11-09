@@ -18,7 +18,7 @@ public class TaskDatabaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL("CREATE TABLE tasks (id INTEGER PRIMARY KEY, name TEXT, description TEXT, deadline INTEGER, completed INTEGER)");
+        db.execSQL("CREATE TABLE tasks (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, description TEXT, deadline INTEGER, completed INTEGER)");
     }
 
     @Override
@@ -54,5 +54,26 @@ public class TaskDatabaseHelper extends SQLiteOpenHelper {
         values.put("deadline", deadline);
         values.put("completed", 0);
         db.insert("tasks", null, values);
+    }
+
+    public void updateTask(int id, String name, String description, long deadline) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put("name", name);
+        values.put("description", description);
+        values.put("deadline", deadline);
+        db.update("tasks", values, "id=?", new String[]{String.valueOf(id)});
+    }
+
+    public void markTaskAsCompleted(int id) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put("completed", 1);
+        db.update("tasks", values, "id=?", new String[]{String.valueOf(id)});
+    }
+
+    public void deleteTask(int id) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete("tasks", "id=?", new String[]{String.valueOf(id)});
     }
 }
